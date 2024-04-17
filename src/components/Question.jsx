@@ -3,6 +3,7 @@ import axios from "axios";
 import data from "../../api/data";
 import Option from "./Options";
 import { useEffect, useState } from "react";
+import Score from "./Scores";
 
 export default function Question() {
   const [question, setQuestion] = useState({
@@ -16,7 +17,8 @@ export default function Question() {
   });
 
   const [answer, setAnswer] = useState([]);
-  const [isCorrect, setCorrect] = useState(false);
+  const [isCorrect, setCorrect] = useState(null);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     const allAnswers = [...question.incorrect_answers, question.correct_answer];
@@ -35,7 +37,19 @@ export default function Question() {
   };
 
   function handleClick(e) {
-    console.log(e.target.id);
+    if (e.target.id === question.correct_answer) {
+      setCorrect(true);
+    } else {
+      setCorrect(false);
+    }
+  }
+
+  function handleSubmit(e) {
+    if (isCorrect) {
+      setScore(score + 1);
+      // next question
+    }
+    e.preventDefault();
   }
   //   useEffect(() => {
   //     const fetchData = async () => {
@@ -61,7 +75,10 @@ export default function Question() {
         {answer.map((ans, index) => (
           <Option isChecked={handleClick} key={index} id={ans} ans={ans} />
         ))}
+        <button onClick={handleSubmit}>Submit</button>
       </form>
+
+      <Score score={score} />
     </div>
   );
 }
