@@ -17,7 +17,8 @@ export default function Question() {
   });
 
   const [answer, setAnswer] = useState([]);
-  const [isCorrect, setCorrect] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
   const [score, setScore] = useState(0);
 
   useEffect(() => {
@@ -37,17 +38,15 @@ export default function Question() {
   };
 
   function handleClick(e) {
-    if (e.target.id === question.correct_answer) {
-      setCorrect(true);
-    } else {
-      setCorrect(false);
-    }
+    const { id } = e.target;
+    setSelectedAnswer(id);
   }
 
   function handleSubmit(e) {
-    if (isCorrect) {
-      setScore(score + 1);
-      // next question
+    if (selectedAnswer === question.correct_answer) {
+      setIsCorrect(true);
+    } else {
+      setIsCorrect(false);
     }
     e.preventDefault();
   }
@@ -77,7 +76,7 @@ export default function Question() {
         ))}
         <button onClick={handleSubmit}>Submit</button>
       </form>
-
+      {isCorrect !== null && <p>{isCorrect ? "Correct" : "Incorrect"}</p>}
       <Score score={score} />
     </div>
   );
