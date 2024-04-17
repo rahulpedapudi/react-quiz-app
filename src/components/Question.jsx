@@ -1,32 +1,30 @@
 import React from "react";
-import axios from "axios";
-import data from "../../api/data";
+import results from "../../api/db";
 import Option from "./Options";
 import { useEffect, useState } from "react";
 import Score from "./Scores";
 
 export default function Question() {
-  const [question, setQuestion] = useState({
-    question: "What was the last Marx Brothers film to feature Zeppo?",
-    correct_answer: "Duck Soup",
-    incorrect_answers: [
-      "A Night at the Opera",
-      "A Day at the Races",
-      "Monkey Business",
-    ],
+  const [question, setQuestion] = useState(() => {
+    const index = Math.floor(Math.random() * results.length);
+    return results[index];
   });
-
   const [answer, setAnswer] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [score, setScore] = useState(0);
+
+  const getRandom = (results) => {
+    const index = Math.floor(Math.random() * results.length);
+    return results[index];
+  };
 
   useEffect(() => {
     const allAnswers = [...question.incorrect_answers, question.correct_answer];
 
     const shuffled = shuffleAnswers(allAnswers);
     setAnswer(shuffled);
-  }, []);
+  }, [question]);
 
   const shuffleAnswers = (array) => {
     const shuffled = [...array];
@@ -43,29 +41,16 @@ export default function Question() {
   }
 
   function handleSubmit(e) {
+    e.preventDefault();
     if (selectedAnswer === question.correct_answer) {
       setIsCorrect(true);
+      setScore(score + 1);
     } else {
       setIsCorrect(false);
     }
-    e.preventDefault();
+    setQuestion(getRandom(results));
+    setSelectedAnswer(null);
   }
-  //   useEffect(() => {
-  //     const fetchData = async () => {
-  //       try {
-  //         // const response = await axios.get(
-  //         //   "https://v2.jokeapi.dev/joke/Any?type=single"
-  //         // );
-  //         const response = await data.get("/random");
-  //         console.log(response);
-  //         setQuestion(response.data);
-  //       } catch (error) {
-  //         console.log(error.message);
-  //       }
-  //     };
-
-  //     fetchData();
-  //   }, []);
 
   return (
     <div>
