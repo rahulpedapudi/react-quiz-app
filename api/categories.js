@@ -1,0 +1,25 @@
+const categories = [
+  "Entertainment: Film",
+  "Entertainment: Board Games",
+  "Entertainment: Video Games",
+  "Science: Mathematics",
+  "Entertainment: Japanese Anime & Manga",
+  "Science: Computers",
+  "Entertainment: Musicals & Theatres",
+  "Mythology",
+  "Entertainment: Books",
+  "Entertainment: Music",
+  "Celebrities",
+  "Geography",
+  "Vehicles",
+  "Politics",
+  "Science & Nature",
+  "Entertainment: Comics",
+  "History",
+  "General Knowledge",
+  "Sports",
+  "Science: Gadgets",
+  "Entertainment: Cartoon & Animations",
+];
+
+export default categories;

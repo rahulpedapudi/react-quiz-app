@@ -3,6 +3,7 @@ import results from "../../api/db";
 import Option from "./Options";
 import { useEffect, useState } from "react";
 import Score from "./Scores";
+import categories from "../../api/categories";
 
 export default function Question() {
   // State management for generating question.
@@ -20,11 +21,24 @@ export default function Question() {
   // keeping track of score
   const [score, setScore] = useState(0);
 
+  // category
+  const [category, setCategory] = useState(() => {
+    const index = Math.floor(Math.random() * categories.length);
+    return categories[index];
+  });
+
   // function to get random object i.e.., question from db
-  const getRandom = (results) => {
+  const getAny = (results) => {
     const index = Math.floor(Math.random() * results.length);
     return results[index];
   };
+
+  // function getCategory(userCategory) {
+  //   const filteredQuestions = results.filter((item) => {
+  //     return item.category === userCategory;
+  //   });
+  //   console.log(filteredQuestions);
+  // }
 
   // shuffles answers and sets the answer whenever the question state changes (dependency)
   useEffect(() => {
@@ -32,6 +46,15 @@ export default function Question() {
     const shuffled = shuffleAnswers(allAnswers);
     setAnswer(shuffled);
   }, [question]);
+
+  useEffect(() => {
+    console.log(category);
+    const filteredQuestions = results.filter((item) => {
+      return item.category === category;
+    });
+    setQuestion(getAny(filteredQuestions));
+    console.log(filteredQuestions);
+  }, [category]);
 
   // shuffle algorithm fisher-yates shuffle
   const shuffleAnswers = (array) => {
@@ -44,13 +67,19 @@ export default function Question() {
   };
 
   // id is the answer string that user selected
-  function handleClick(e) {
+  function handleOptionClick(e) {
     const { id } = e.target;
     setSelectedAnswer(id);
   }
 
+  function handleCategoryClick(e) {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    // getCategory(category);
+  }
+
   // checking if user selected answer is equal to actual answer
-  function handleSubmit(e) {
+  function handleSubmitAnswer(e) {
     e.preventDefault();
     if (selectedAnswer === question.correct_answer) {
       setIsCorrect(true);
@@ -58,7 +87,7 @@ export default function Question() {
     } else {
       setIsCorrect(false);
     }
-    setQuestion(getRandom(results)); // generating another ques after submit
+    setQuestion(getAny(results)); // generating another ques after submit
     setSelectedAnswer(null);
     // uncheck radio buttons after submit
     const radioButtons = document.querySelectorAll('input[type="radio"]');
@@ -69,12 +98,28 @@ export default function Question() {
 
   return (
     <div>
+      <form>
+        <select name="trivia_category" onChange={handleCategoryClick}>
+          {categories.map((value, index) => (
+            <option key={index} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+      </form>
+
       <h2>{question.question}</h2>
+      <p>Category: {question.category}</p>
       <form action="post">
         {answer.map((ans, index) => (
-          <Option isChecked={handleClick} key={index} id={ans} ans={ans} />
+          <Option
+            isChecked={handleOptionClick}
+            key={index}
+            id={ans}
+            ans={ans}
+          />
         ))}
-        <button onClick={handleSubmit}>Submit</button>
+        <button onClick={handleSubmitAnswer}>Submit</button>
       </form>
       {isCorrect !== null && <p>{isCorrect ? "Correct" : "Incorrect"}</p>}
       <Score score={score} />
