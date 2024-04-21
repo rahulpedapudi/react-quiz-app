@@ -26,6 +26,7 @@ export default function Question() {
     const index = Math.floor(Math.random() * categories.length);
     return categories[index];
   });
+  // const [category, setCategory] = useState(null);
 
   // function to get random object i.e.., question from db
   const getAny = (results) => {
@@ -33,12 +34,17 @@ export default function Question() {
     return results[index];
   };
 
-  // function getCategory(userCategory) {
-  //   const filteredQuestions = results.filter((item) => {
-  //     return item.category === userCategory;
-  //   });
-  //   console.log(filteredQuestions);
-  // }
+  function getCategory(userCategory) {
+    if (category !== "Select Category") {
+      const filteredQuestions = results.filter((item) => {
+        return item.category === userCategory;
+      });
+      setQuestion(getAny(filteredQuestions));
+      console.log(filteredQuestions);
+    } else {
+      setQuestion(getAny(results));
+    }
+  }
 
   // shuffles answers and sets the answer whenever the question state changes (dependency)
   useEffect(() => {
@@ -48,12 +54,7 @@ export default function Question() {
   }, [question]);
 
   useEffect(() => {
-    console.log(category);
-    const filteredQuestions = results.filter((item) => {
-      return item.category === category;
-    });
-    setQuestion(getAny(filteredQuestions));
-    console.log(filteredQuestions);
+    getCategory(category);
   }, [category]);
 
   // shuffle algorithm fisher-yates shuffle
@@ -87,7 +88,12 @@ export default function Question() {
     } else {
       setIsCorrect(false);
     }
-    setQuestion(getAny(results)); // generating another ques after submit
+
+    if (category !== "Select Category") {
+      getCategory(category);
+    } else {
+      setQuestion(getAny(results)); // generating another ques after submit
+    }
     setSelectedAnswer(null);
     // uncheck radio buttons after submit
     const radioButtons = document.querySelectorAll('input[type="radio"]');

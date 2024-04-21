@@ -1,4 +1,5 @@
 const categories = [
+  "Select Category",
   "Entertainment: Film",
   "Entertainment: Board Games",
   "Entertainment: Video Games",
