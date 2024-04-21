@@ -26,23 +26,26 @@ export default function Question() {
     const index = Math.floor(Math.random() * categories.length);
     return categories[index];
   });
-  // const [category, setCategory] = useState(null);
 
   // function to get random object i.e.., question from db
-  const getAny = (results) => {
+  const getRandom = (results) => {
     const index = Math.floor(Math.random() * results.length);
     return results[index];
   };
 
+  // get user requested category and selects random one from the filtered questions
   function getCategory(userCategory) {
+    // checking if user selected any category
     if (category !== "Select Category") {
       const filteredQuestions = results.filter((item) => {
         return item.category === userCategory;
       });
-      setQuestion(getAny(filteredQuestions));
+      // set question with random question from filtered questions
+      setQuestion(getRandom(filteredQuestions));
       console.log(filteredQuestions);
     } else {
-      setQuestion(getAny(results));
+      // set random question if no category is selected
+      setQuestion(getRandom(results));
     }
   }
 
@@ -53,6 +56,7 @@ export default function Question() {
     setAnswer(shuffled);
   }, [question]);
 
+  // renders everytime when a category is changed
   useEffect(() => {
     getCategory(category);
   }, [category]);
@@ -76,7 +80,6 @@ export default function Question() {
   function handleCategoryClick(e) {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
-    // getCategory(category);
   }
 
   // checking if user selected answer is equal to actual answer
@@ -92,7 +95,7 @@ export default function Question() {
     if (category !== "Select Category") {
       getCategory(category);
     } else {
-      setQuestion(getAny(results)); // generating another ques after submit
+      setQuestion(getRandom(results)); // generating another ques after submit
     }
     setSelectedAnswer(null);
     // uncheck radio buttons after submit
