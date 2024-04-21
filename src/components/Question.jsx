@@ -27,6 +27,8 @@ export default function Question() {
     return categories[index];
   });
 
+  const [difficulty, setDifficulty] = useState(null);
+
   // function to get random object i.e.., question from db
   const getRandom = (results) => {
     const index = Math.floor(Math.random() * results.length);
@@ -34,18 +36,25 @@ export default function Question() {
   };
 
   // get user requested category and selects random one from the filtered questions
-  function getCategory(userCategory) {
-    // checking if user selected any category
-    if (category !== "Select Category") {
-      const filteredQuestions = results.filter((item) => {
-        return item.category === userCategory;
-      });
-      // set question with random question from filtered questions
-      setQuestion(getRandom(filteredQuestions));
-      console.log(filteredQuestions);
-    } else {
-      // set random question if no category is selected
-      setQuestion(getRandom(results));
+  function getByFilter(userCategory, userDifficulty) {
+    // checking if user selected both category and dfficulty
+    if (userCategory && userDifficulty) {
+      // checking if user selected any category and difficulty
+      if (
+        category !== "Select Category" &&
+        userDifficulty !== "Select Difficulty"
+      ) {
+        const filteredQuestions = results.filter((item) => {
+          return (
+            item.category === userCategory && item.difficulty == userDifficulty
+          );
+        });
+        // set question with random question from filtered questions
+        setQuestion(getRandom(filteredQuestions));
+      } else {
+        // set random question if no category and difficulty is selected
+        setQuestion(getRandom(results));
+      }
     }
   }
 
@@ -58,8 +67,8 @@ export default function Question() {
 
   // renders everytime when a category is changed
   useEffect(() => {
-    getCategory(category);
-  }, [category]);
+    getByFilter(category, difficulty);
+  }, [category, difficulty]);
 
   // shuffle algorithm fisher-yates shuffle
   const shuffleAnswers = (array) => {
@@ -82,6 +91,11 @@ export default function Question() {
     setCategory(selectedCategory);
   }
 
+  function handleDifficultyClick(e) {
+    const selectedDifficulty = e.target.value;
+    setDifficulty(selectedDifficulty);
+  }
+
   // checking if user selected answer is equal to actual answer
   function handleSubmitAnswer(e) {
     e.preventDefault();
@@ -93,7 +107,7 @@ export default function Question() {
     }
 
     if (category !== "Select Category") {
-      getCategory(category);
+      getByFilter(category);
     } else {
       setQuestion(getRandom(results)); // generating another ques after submit
     }
@@ -115,10 +129,23 @@ export default function Question() {
             </option>
           ))}
         </select>
+
+        <select
+          onChange={handleDifficultyClick}
+          name="trivia_difficulty"
+          id="difficulty">
+          <option value="Any Difficulty" defaultValue={true}>
+            Select Difficulty
+          </option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
       </form>
 
       <h2>{question.question}</h2>
       <p>Category: {question.category}</p>
+      <p>Difficulty: {question.difficulty}</p>
       <form action="post">
         {answer.map((ans, index) => (
           <Option
