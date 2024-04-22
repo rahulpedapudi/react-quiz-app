@@ -1,8 +1,9 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import results from "../../api/db";
 import Option from "./Options";
-import { useEffect, useState } from "react";
 import Score from "./Scores";
+import Timer from "./Timer";
 import categories from "../../api/categories";
 
 export default function Question() {
@@ -46,7 +47,7 @@ export default function Question() {
       ) {
         const filteredQuestions = results.filter((item) => {
           return (
-            item.category === userCategory && item.difficulty == userDifficulty
+            item.category === userCategory && item.difficulty === userDifficulty
           );
         });
         // set question with random question from filtered questions
@@ -55,6 +56,8 @@ export default function Question() {
         // set random question if no category and difficulty is selected
         setQuestion(getRandom(results));
       }
+    } else {
+      setQuestion(getRandom(results));
     }
   }
 
@@ -105,12 +108,7 @@ export default function Question() {
     } else {
       setIsCorrect(false);
     }
-
-    if (category !== "Select Category") {
-      getByFilter(category);
-    } else {
-      setQuestion(getRandom(results)); // generating another ques after submit
-    }
+    getByFilter(category, difficulty);
     setSelectedAnswer(null);
     // uncheck radio buttons after submit
     const radioButtons = document.querySelectorAll('input[type="radio"]');
@@ -159,6 +157,16 @@ export default function Question() {
       </form>
       {isCorrect !== null && <p>{isCorrect ? "Correct" : "Incorrect"}</p>}
       <Score score={score} />
+      <Timer
+        initialSeconds={
+          question.difficulty === "easy"
+            ? 30
+            : question.difficulty === "medium"
+            ? 20
+            : 15
+        }
+        questionChange={question}
+      />
     </div>
   );
 }
