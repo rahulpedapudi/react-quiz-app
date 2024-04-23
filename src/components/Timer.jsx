@@ -7,7 +7,7 @@ export default function Timer(props) {
 
   useEffect(() => {
     setSeconds(props.initialSeconds);
-  }, [props.questionChange]);
+  }, [props.question]);
 
   useEffect(() => {
     let intervalId;
@@ -15,6 +15,9 @@ export default function Timer(props) {
       intervalId = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds - 1);
       }, 1000);
+    }
+    if (seconds == 0) {
+      props.onExpire();
     }
     return () => clearInterval(intervalId);
   }, [isRunning, seconds]);
@@ -24,20 +27,20 @@ export default function Timer(props) {
   //   };
 
   const pauseTimer = () => {
-    setIsRunning(false);
+    setIsRunning(!isRunning);
   };
 
-  const resetTimer = () => {
-    setIsRunning(false);
-    setSeconds(props.initialSeconds);
-  };
+  // const resetTimer = () => {
+  //   setIsRunning(false);
+  //   setSeconds(props.initialSeconds);
+  // };
 
   return (
     <div>
       <h2>Timer: {seconds} seconds</h2>
       {/* <button onClick={startTimer}>Start</button> */}
-      <button onClick={pauseTimer}>Pause</button>
-      <button onClick={resetTimer}>Reset</button>
+      <button onClick={pauseTimer}>{isRunning ? "Pause" : "Resume"}</button>
+      {/* <button onClick={resetTimer}>Reset</button> */}
     </div>
   );
 }

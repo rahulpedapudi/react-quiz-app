@@ -117,6 +117,12 @@ export default function Question() {
     });
   }
 
+  const handleTimerExpire = () => {
+    console.log(category);
+    console.log(difficulty);
+    getByFilter(category, difficulty);
+  };
+
   return (
     <div>
       <form>
@@ -165,7 +171,8 @@ export default function Question() {
             ? 20
             : 15
         }
-        questionChange={question}
+        question={question}
+        onExpire={handleTimerExpire}
       />
     </div>
   );
