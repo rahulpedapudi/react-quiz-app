@@ -44,7 +44,7 @@ const data = {
     },
     {
       type: "boolean",
-      difficulty: "medium",
+      difficulty: "hard",
       category: "Science: Mathematics",
       question:
         'You can square root a negative number with an imaginary number "i".',

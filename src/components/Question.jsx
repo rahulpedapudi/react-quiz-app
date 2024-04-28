@@ -38,26 +38,15 @@ export default function Question() {
 
   // get user requested category and selects random one from the filtered questions
   function getByFilter(userCategory, userDifficulty) {
-    // checking if user selected both category and dfficulty
+    if (userCategory) {
+      setCategory(userCategory);
+    }
+    if (userDifficulty) {
+      setDifficulty(userDifficulty);
+    }
     if (userCategory && userDifficulty) {
-      // checking if user selected any category and difficulty
-      if (
-        category !== "Select Category" &&
-        userDifficulty !== "Select Difficulty"
-      ) {
-        const filteredQuestions = results.filter((item) => {
-          return (
-            item.category === userCategory && item.difficulty === userDifficulty
-          );
-        });
-        // set question with random question from filtered questions
-        setQuestion(getRandom(filteredQuestions));
-      } else {
-        // set random question if no category and difficulty is selected
-        setQuestion(getRandom(results));
-      }
-    } else {
-      setQuestion(getRandom(results));
+      setCategory(userCategory);
+      setDifficulty(userDifficulty);
     }
   }
 
@@ -108,13 +97,27 @@ export default function Question() {
     } else {
       setIsCorrect(false);
     }
-    getByFilter(category, difficulty);
+    // getByFilter(category, difficulty);
+    handleFilterClick();
     setSelectedAnswer(null);
     // uncheck radio buttons after submit
     const radioButtons = document.querySelectorAll('input[type="radio"]');
     radioButtons.forEach((button) => {
       button.checked = false;
     });
+  }
+
+  function handleFilterClick() {
+    if (category === "Select Category" && difficulty === "Select Difficulty") {
+      setQuestion(getRandom(results));
+    } else if (category && difficulty) {
+      const filteredQuestions = results.filter((item) => {
+        return item.category === category && item.difficulty === difficulty;
+      });
+      setQuestion(getRandom(filteredQuestions));
+    } else {
+      setQuestion(getRandom(results));
+    }
   }
 
   const handleTimerExpire = () => {
@@ -145,6 +148,9 @@ export default function Question() {
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
         </select>
+        <button onClick={handleFilterClick} type="button">
+          Filter
+        </button>
       </form>
 
       <h2>{question.question}</h2>
